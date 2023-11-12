@@ -74,17 +74,17 @@ jobs:
           path: ./linux/arm64/captions
       - name: Get commit SHA
         id: get_sha
-        run: echo "::set-output name=sha::$(git rev-parse HEAD)"
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.sha }}
-          release_name: Release ${{ github.sha }}
+          tag_name: ${{ steps.get_sha.outputs.sha_short }}
+          release_name: Release ${{ steps.get_sha.outputs.sha_short }}
           body: |
-            Commit SHA: ${{ github.sha }}
+            Commit SHA: ${{ steps.get_sha.outputs.sha_short }}
             Binary SHA256 checksum (linux/amd64): ${{ needs.build.outputs.checksum.sha256['linux/amd64'] }}
             Binary SHA256 checksum (linux/arm64): ${{ needs.build.outputs.checksum.sha256['linux/arm64'] }}
           draft: false
