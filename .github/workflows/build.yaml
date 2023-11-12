@@ -63,11 +63,13 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: linux-amd64
+          path: ./linux/amd64/
 
       - name: Download arm64 artifact
         uses: actions/download-artifact@v2
         with:
           name: linux-arm64
+          path: ./linux/arm64/
       - name: Get commit SHA
         id: get_sha
         run: |
