@@ -5,6 +5,7 @@ Binaries for different platforms can be built using `docker buildx` and specifyi
 ```bash
 docker buildx create --name captions-builder --use
 docker buildx inspect --bootstrap
+docker buildx build --platform linux/amd64 -t captions .
 docker run --platform=linux/amd64 -v .:/app/out captions
 
 ./captions
