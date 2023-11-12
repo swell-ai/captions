@@ -41,8 +41,8 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/${{ github.repository }}/captions-${{ steps.save_platform.outputs.platform }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha, key=${{ steps.save_platform.outputs.platform }}
+          cache-to: type=gha, key=${{ steps.save_platform.outputs.platform }}, mode=max
           platforms: ${{ matrix.platform }}
 
       - name: Run the Docker image
