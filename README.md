@@ -3,7 +3,7 @@
 ## Compile
 
 ```bash
-docker build -t . captions
+docker build --platform=linux/arm64 -t . captions
 
 docker run -v .:/app/out captions
 
