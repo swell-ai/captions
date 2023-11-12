@@ -81,10 +81,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.get_sha.outputs.sha }}
-          release_name: ${{ steps.get_sha.outputs.sha }}
+          tag_name: ${{ github.sha }}
+          release_name: Release ${{ github.sha }}
           body: |
-            Commit SHA: ${{ steps.get_sha.outputs.sha }}
+            Commit SHA: ${{ github.sha }}
             Binary SHA256 checksum (linux/amd64): ${{ needs.build.outputs.checksum.sha256['linux/amd64'] }}
             Binary SHA256 checksum (linux/arm64): ${{ needs.build.outputs.checksum.sha256['linux/arm64'] }}
           draft: false
