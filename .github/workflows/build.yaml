@@ -8,33 +8,28 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        platform: ["linux/amd64", "linux/arm64"]
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: (amd64) Build the Docker image
-        run: docker build --platform=linux/amd64 -t captions-amd64 .
+      - name: Build the Docker image
+        run: docker build --platform=${{ matrix.platform }} -t captions-${{ matrix.platform }} .
 
-      - name: (amd64) Run the Docker image
-        run: mkdir -p ./amd64 && docker run --platform=linux/amd64 -v ./amd64:/app/out captions-amd64
-
-      - name: (arm64) Build the Docker image
-        run: docker build --platform=linux/arm64 -t captions-arm64 .
-
-      - name: (arm64) Run the Docker image
-        run: mkdir -p ./arm64 && docker run --platform=linux/arm64 -v ./arm64:/app/out captions-arm64
+      - name: Run the Docker image
+        run: mkdir -p ./${{ matrix.platform }} && docker run --platform=${{ matrix.platform }} -v ./${{ matrix.platform }}:/app/out captions-${{ matrix.platform }}
 
       - name: Get commit SHA
         id: get_sha
         run: echo "::set-output name=sha::$(git rev-parse HEAD)"
-      - name: Calculate amd64 binary checksum
-        id: checksum_amd64
-        run: echo "::set-output name=sha256_amd64::$(sha256sum ./amd64/captions | awk '{print $1}')"
-      - name: Calculate arm64 binary checksum
-        id: checksum_arm64
-        run: echo "::set-output name=sha256_arm64::$(sha256sum ./arm64/captions | awk '{print $1}')"
+      - name: Calculate binary checksum
+        id: checksum
+        run: echo "::set-output name=sha256::$(sha256sum ./${{ matrix.platform }}/captions | awk '{print $1}')"
       - name: Create Release
+        if: matrix.platform == 'linux/amd64'
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -44,28 +39,16 @@ jobs:
           release_name: ${{ steps.get_sha.outputs.sha }}
           body: |
             Commit SHA: ${{ steps.get_sha.outputs.sha }}
-            AMD64 Binary SHA256 checksum: ${{ steps.checksum_amd64.outputs.sha256_amd64 }}
-            ARM64 Binary SHA256 checksum: ${{ steps.checksum_arm64.outputs.sha256_arm64 }}
+            Binary SHA256 checksum: ${{ steps.checksum.outputs.sha256 }}
           draft: true
           prerelease: true
-      - name: Upload AMD64 Release Asset
-        id: upload-amd64-release-asset
+      - name: Upload Release Asset
+        id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./amd64/captions
-          asset_name: captions-amd64
-          asset_content_type: application/octet-stream
-
-      - name: Upload ARM64 Release Asset
-        id: upload-arm64-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./arm64/captions
-          asset_name: captions-arm64
+          asset_path: ./${{ matrix.platform }}/captions
+          asset_name: captions-${{ matrix.platform }}
           asset_content_type: application/octet-stream
