@@ -1,29 +1,35 @@
-_This was built on a mac m1: for various machines, changes may have to be made._
-_Dockerfile was built to work on Google Cloud Run_
+\*\*\*\*_This was built on a mac m1: for various machines, changes may have to be made._
 
 ## Compile
 
-```
-sh ./scripts/compile
-```
+```bash
+docker build -t . captions
 
-## Run Server
+docker run -v .:/app/out captions
 
-```
-./main
+./captions
 ```
 
-## Trigger Job
+## Run command
 
-Use PostMan to send a request to `http://localhost:8080` send a raw body that looks something like this
-
+```bash
+./captions \
+  --input input.mp4 \
+  --segments segments.json \
+  --output output.mp4 \
+  --font "Montserrat ExtraBold 56" \
+  --highlighter true \
+  --text_color "#f6be0e"
 ```
-{
-    "video_filename": "https://storage.googleapis.com/ai-video-maker/clop1ciqu0007vynmu65snejx_edited.mp4",
-    "json_url": "https://storage.googleapis.com/ai-video-maker/transcription_clop1ciqu0007vynmu65snejx.json",
-    "output_name": "lol",
-    "font": "Montserrat ExtraBold 56",
-    "highlighter": false,
-    "text_color": "#f6be0e"
-}
+
+or with hosted assets...
+
+```bash
+./captions \
+  --input https://example.com/input.mp4 \
+  --segments https://example.com/segments.json \
+  --output output.mp4 \
+  --font "Montserrat ExtraBold 56" \
+  --highlighter true \
+  --text_color "#f6be0e"
 ```
