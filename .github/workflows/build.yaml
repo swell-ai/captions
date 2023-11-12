@@ -22,7 +22,7 @@ jobs:
           docker buildx inspect --bootstrap
 
       - name: Build the Docker image
-        run: docker buildx build --platform=${{ matrix.platform }} -t captions .
+        run: docker buildx build --platform=${{ matrix.platform }} -t captions . --load
 
       - name: Run the Docker image
         run: mkdir -p ./${{ matrix.platform }} && docker run --platform=${{ matrix.platform }} -v ./${{ matrix.platform }}:/app/out captions
