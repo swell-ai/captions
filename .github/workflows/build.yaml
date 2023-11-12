@@ -1,0 +1,26 @@
+name: Build, Run and Publish binary
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag captions:$(date +%s)
+
+      - name: Run the Docker image
+        run: docker run -v .:/app/out captions:$(date +%s)
+
+      - name: Login to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push the Docker image
+        run: docker tag captions:$(date +%s) ghcr.io/${{ github.repository }}/captions:$(date +%s) && docker push ghcr.io/${{ github.repository }}/captions:$(date +%s)

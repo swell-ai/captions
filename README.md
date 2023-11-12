@@ -1,9 +1,13 @@
-_This was built on a mac m1: for various machines, changes may have to be made._
+\*\*\*\*_This was built on a mac m1: for various machines, changes may have to be made._
 
 ## Compile
 
 ```bash
-sh ./scripts/compile
+docker build -t . captions
+
+docker run -v .:/app/out captions
+
+./captions
 ```
 
 ## Run command
