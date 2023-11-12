@@ -39,6 +39,7 @@ jobs:
           tags: ghcr.io/${{ github.repository }}/captions-${{ matrix.platform }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          platforms: ${{ matrix.platform }}
 
       - name: Run the Docker image
         run: mkdir -p ./${{ matrix.platform }} && docker run --platform=${{ matrix.platform }} -v ./${{ matrix.platform }}:/app/out ghcr.io/${{ github.repository }}/captions-${{ matrix.platform }}
