@@ -66,15 +66,26 @@ jobs:
             Commit SHA: ${{ needs.build.outputs.get_sha.sha }}
             Binary SHA256 checksum (linux/amd64): ${{ needs.build.outputs.checksum.sha256['linux/amd64'] }}
             Binary SHA256 checksum (linux/arm64): ${{ needs.build.outputs.checksum.sha256['linux/arm64'] }}
-          draft: true
-          prerelease: true
-      - name: Upload Release Asset
-        id: upload-release-asset
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset for linux/amd64
+        id: upload-release-asset-amd64
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ matrix.platform }}/captions
-          asset_name: captions-${{ matrix.platform }}
+          asset_path: ./linux/amd64/captions
+          asset_name: captions-linux-amd64
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release Asset for linux/arm64
+        id: upload-release-asset-arm64
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./linux/arm64/captions
+          asset_name: captions-linux-arm64
           asset_content_type: application/octet-stream
