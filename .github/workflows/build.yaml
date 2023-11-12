@@ -80,8 +80,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref_name }}
-          release_name: "Release for ref ${{ github.ref_name }}"
+          tag_name: ${{ steps.get_sha.outputs.sha }}
+          release_name: ${{ steps.get_sha.outputs.sha }}
           body: |
             Commit SHA: ${{ steps.get_sha.outputs.sha }}
             Binary SHA256 checksum (linux/amd64): ${{ needs.build.outputs.checksum.sha256['linux/amd64'] }}
