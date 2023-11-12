@@ -70,7 +70,7 @@ jobs:
           path: ./linux/arm64/captions
       - name: Get commit SHA
         id: get_sha
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
 
       - name: Calculate arm64 binary checksum
         id: arm64_checksum
