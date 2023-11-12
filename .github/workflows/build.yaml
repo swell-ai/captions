@@ -51,7 +51,7 @@ jobs:
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.platform }}
+          name: ${{ matrix.platform.replace('/', '-') }}
           path: ./${{ matrix.platform }}/captions
 
   release:
@@ -61,12 +61,12 @@ jobs:
       - name: Download amd64 artifact
         uses: actions/download-artifact@v2
         with:
-          name: linux/amd64
+          name: linux-amd64
           path: ./linux/amd64/captions
       - name: Download arm64 artifact
         uses: actions/download-artifact@v2
         with:
-          name: linux/arm64
+          name: linux-arm64
           path: ./linux/arm64/captions
       - name: Get commit SHA
         id: get_sha
