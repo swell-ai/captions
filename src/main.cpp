@@ -21,7 +21,7 @@ Arguments parse_arguments(int argc, char *argv[])
 
     if (argc != 13)
     {
-        std::cerr << "Invalid number of arguments. Usage: ./captions --ipnut <input_source> --segments <segments_source> --output <output_name> --font <font> --highlighter <highlighter> --text_color <text_color>" << std::endl;
+        std::cerr << "Invalid number of arguments. Usage: ./captions --input <input_source> --segments <segments_source> --output <output_name> --font <font> --highlighter <highlighter> --text_color <text_color>" << std::endl;
         return args;
     }
 
