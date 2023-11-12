@@ -1,5 +1,5 @@
 # Use a base image with a C++ compiler
-FROM ubuntu:20.04
+FROM --platform=linux/arm64 ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 # Set the working directory
