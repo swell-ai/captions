@@ -48,10 +48,13 @@ jobs:
         id: checksum
         run: echo "::set-output name=sha256::$(sha256sum ./${{ matrix.platform }}/captions | awk '{print $1}')"
 
+      - name: Save platform as a new variable
+        id: save_platform
+        run: echo "::set-output name=platform::$(echo ${{ matrix.platform }} | tr '/' '-')"
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.platform.replace('/', '-') }}
+          name: ${{ steps.save_platform.outputs.platform }}
           path: ./${{ matrix.platform }}/captions
 
   release:
