@@ -19,6 +19,10 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
+      - name: Save platform as a new variable
+        id: save_platform
+        run: echo "::set-output name=platform::$(echo ${{ matrix.platform }} | tr '/' '-')"
+
       - name: Create and use builder
         run: |
           docker buildx create --name captions-builder --use
@@ -36,21 +40,18 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}/captions-${{ matrix.platform }}
+          tags: ghcr.io/${{ github.repository }}/captions-${{ steps.save_platform.outputs.platform }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: ${{ matrix.platform }}
 
       - name: Run the Docker image
-        run: mkdir -p ./${{ matrix.platform }} && docker run --platform=${{ matrix.platform }} -v ./${{ matrix.platform }}:/app/out ghcr.io/${{ github.repository }}/captions-${{ matrix.platform }}
+        run: mkdir -p ./${{ matrix.platform }} && docker run --platform=${{ matrix.platform }} -v ./${{ matrix.platform }}:/app/out ghcr.io/${{ github.repository }}/captions-${{ steps.save_platform.outputs.platform }}
 
       - name: Calculate binary checksum
         id: checksum
         run: echo "::set-output name=sha256::$(sha256sum ./${{ matrix.platform }}/captions | awk '{print $1}')"
 
-      - name: Save platform as a new variable
-        id: save_platform
-        run: echo "::set-output name=platform::$(echo ${{ matrix.platform }} | tr '/' '-')"
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
         with:
