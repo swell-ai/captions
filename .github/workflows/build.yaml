@@ -39,7 +39,6 @@ jobs:
           body: |
             Commit SHA: ${{ steps.get_sha.outputs.sha }}
             Binary SHA256 checksum: ${{ steps.checksum.outputs.sha256 }}
-            Download: https://github.com/${{ github.repository }}/releases/tag/${{ steps.get_sha.outputs.sha }}
           draft: true
           prerelease: true
       - name: Upload Release Asset
