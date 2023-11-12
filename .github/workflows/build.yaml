@@ -48,10 +48,26 @@ jobs:
         id: checksum
         run: echo "::set-output name=sha256::$(sha256sum ./${{ matrix.platform }}/captions | awk '{print $1}')"
 
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.platform }}
+          path: ./${{ matrix.platform }}/captions
+
   release:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Download amd64 artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: linux/amd64
+          path: ./linux/amd64/captions
+      - name: Download arm64 artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: linux/arm64
+          path: ./linux/arm64/captions
       - name: Get commit SHA
         id: get_sha
         run: echo "::set-output name=sha::$(git rev-parse HEAD)"
