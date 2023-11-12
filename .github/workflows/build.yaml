@@ -64,7 +64,7 @@ jobs:
           tag_name: ${{ github.ref_name }}
           release_name: "Release for ref ${{ github.ref_name }}"
           body: |
-            Commit SHA: ${{ needs.build.outputs.get_sha.sha }}
+            Commit SHA: ${{ steps.get_sha.outputs.sha }}
             Binary SHA256 checksum (linux/amd64): ${{ needs.build.outputs.checksum.sha256['linux/amd64'] }}
             Binary SHA256 checksum (linux/arm64): ${{ needs.build.outputs.checksum.sha256['linux/arm64'] }}
           draft: false
