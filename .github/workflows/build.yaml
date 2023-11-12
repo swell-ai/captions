@@ -30,9 +30,6 @@ jobs:
       - name: Run the Docker image
         run: mkdir -p ./${{ matrix.platform }} && docker run --platform=${{ matrix.platform }} -v ./${{ matrix.platform }}:/app/out captions
 
-      - name: Get commit SHA
-        id: get_sha
-        run: echo "::set-output name=sha::$(git rev-parse HEAD)"
       - name: Calculate binary checksum
         id: checksum
         run: echo "::set-output name=sha256::$(sha256sum ./${{ matrix.platform }}/captions | awk '{print $1}')"
@@ -41,14 +38,17 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Get commit SHA
+        id: get_sha
+        run: echo "::set-output name=sha::$(git rev-parse HEAD)"
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ needs.build.outputs.get_sha.sha }}
-          release_name: ${{ needs.build.outputs.get_sha.sha }}
+          tag_name: ${{ github.ref }}
+          release_name: "Release for ref ${{ github.ref }}"
           body: |
             Commit SHA: ${{ needs.build.outputs.get_sha.sha }}
             Binary SHA256 checksum (linux/amd64): ${{ needs.build.outputs.checksum.sha256['linux/amd64'] }}
