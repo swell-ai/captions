@@ -22,10 +22,10 @@ jobs:
           docker buildx inspect --bootstrap
 
       - name: Build the Docker image
-        run: docker buildx build --platform=${{ matrix.platform }} -t captions-${{ matrix.platform }} .
+        run: docker buildx build --platform=${{ matrix.platform }} -t captions .
 
       - name: Run the Docker image
-        run: mkdir -p ./${{ matrix.platform }} && docker run --platform=${{ matrix.platform }} -v ./${{ matrix.platform }}:/app/out captions-${{ matrix.platform }}
+        run: mkdir -p ./${{ matrix.platform }} && docker run --platform=${{ matrix.platform }} -v ./${{ matrix.platform }}:/app/out captions
 
       - name: Get commit SHA
         id: get_sha
