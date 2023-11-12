@@ -33,18 +33,23 @@ jobs:
       - name: Calculate binary checksum
         id: checksum
         run: echo "::set-output name=sha256::$(sha256sum ./${{ matrix.platform }}/captions | awk '{print $1}')"
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Create Release
-        if: matrix.platform == 'linux/amd64'
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.get_sha.outputs.sha }}
-          release_name: ${{ steps.get_sha.outputs.sha }}
+          tag_name: ${{ needs.build.outputs.get_sha.sha }}
+          release_name: ${{ needs.build.outputs.get_sha.sha }}
           body: |
-            Commit SHA: ${{ steps.get_sha.outputs.sha }}
-            Binary SHA256 checksum: ${{ steps.checksum.outputs.sha256 }}
+            Commit SHA: ${{ needs.build.outputs.get_sha.sha }}
+            Binary SHA256 checksum (linux/amd64): ${{ needs.build.outputs.checksum.sha256['linux/amd64'] }}
+            Binary SHA256 checksum (linux/arm64): ${{ needs.build.outputs.checksum.sha256['linux/arm64'] }}
           draft: true
           prerelease: true
       - name: Upload Release Asset
