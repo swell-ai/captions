@@ -22,6 +22,9 @@ jobs:
       - name: Login to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
+      - name: Get commit SHA
+        id: get_sha
+        run: echo "::set-output name=sha::$(git rev-parse HEAD)"
       - name: Calculate checksum
         id: checksum
         run: echo "::set-output name=sha256::$(sha256sum ./captions | awk '{print $1}')"
@@ -31,11 +34,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ steps.get_sha.outputs.sha }}
+          release_name: ${{ steps.get_sha.outputs.sha }}
           body: |
-            SHA256 checksum: ${{ steps.checksum.outputs.sha256 }}
-            Download: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref }}
+            Commit SHA: ${{ steps.get_sha.outputs.sha }}
+            Binary SHA256 checksum: ${{ steps.checksum.outputs.sha256 }}
+            Download: https://github.com/${{ github.repository }}/releases/tag/${{ steps.get_sha.outputs.sha }}
           draft: true
           prerelease: true
       - name: Upload Release Asset
