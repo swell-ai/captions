@@ -24,11 +24,24 @@ jobs:
           docker buildx create --name captions-builder --use
           docker buildx inspect --bootstrap
 
-      - name: Build the Docker image
-        run: docker buildx build --platform=${{ matrix.platform }} -t captions . --load
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}/captions:${{ matrix.platform }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Run the Docker image
-        run: mkdir -p ./${{ matrix.platform }} && docker run --platform=${{ matrix.platform }} -v ./${{ matrix.platform }}:/app/out captions
+        run: mkdir -p ./${{ matrix.platform }} && docker run --platform=${{ matrix.platform }} -v ./${{ matrix.platform }}:/app/out ghcr.io/${{ github.repository }}/captions:${{ matrix.platform }}
 
       - name: Calculate binary checksum
         id: checksum
