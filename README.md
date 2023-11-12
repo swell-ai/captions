@@ -1,11 +1,11 @@
-\*\*\*\*_This was built on a mac m1: for various machines, changes may have to be made._
-
 ## Compile
 
-```bash
-docker build --platform=linux/arm64 -t . captions
+Binaries for different platforms can be built using `docker buildx` and specifying a --platform directive. Tested platforms are `linux/amd64` and `linux/arm64`.
 
-docker run -v .:/app/out captions
+```bash
+docker buildx create --name captions-builder --use
+docker buildx inspect --bootstrap
+docker run --platform=linux/amd64 -v .:/app/out captions
 
 ./captions
 ```
