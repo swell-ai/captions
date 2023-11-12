@@ -61,8 +61,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: "Release for ref ${{ github.ref }}"
+          tag_name: ${{ github.ref_name }}
+          release_name: "Release for ref ${{ github.ref_name }}"
           body: |
             Commit SHA: ${{ needs.build.outputs.get_sha.sha }}
             Binary SHA256 checksum (linux/amd64): ${{ needs.build.outputs.checksum.sha256['linux/amd64'] }}
