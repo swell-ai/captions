@@ -16,8 +16,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Create and use builder
+        run: |
+          docker buildx create --name captions-builder --use
+          docker buildx inspect --bootstrap
+
       - name: Build the Docker image
-        run: docker build --platform=${{ matrix.platform }} -t captions-${{ matrix.platform }} .
+        run: docker buildx build --platform=${{ matrix.platform }} -t captions-${{ matrix.platform }} .
 
       - name: Run the Docker image
         run: mkdir -p ./${{ matrix.platform }} && docker run --platform=${{ matrix.platform }} -v ./${{ matrix.platform }}:/app/out captions-${{ matrix.platform }}
